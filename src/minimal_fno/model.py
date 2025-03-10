@@ -109,7 +109,6 @@ class FNO2d(L.LightningModule):
         loss = F.mse_loss(y_pred, y)  # Compute validation loss.
         self.log("val_loss", loss)  # Log validation loss.
 
-
     def configure_optimizers(self):
         # Configure the Adam optimizer with a learning rate of 0.001.
         return torch.optim.Adam(self.parameters(), lr=0.001)
