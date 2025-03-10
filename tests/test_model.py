@@ -84,3 +84,10 @@ def test_validation_step(fno2d_model, trainer, dataloaders):
     _, val_loader = dataloaders
     trainer.validate(fno2d_model, val_loader)
     assert trainer.logged_metrics is not None
+
+
+def test_test_step(fno2d_model, trainer, dataloaders):
+    """Test the test step of the FNO2d model."""
+    _, test_loader = dataloaders
+    trainer.test(fno2d_model, test_loader)
+    assert trainer.logged_metrics is not None

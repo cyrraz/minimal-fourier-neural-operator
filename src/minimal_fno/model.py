@@ -97,18 +97,23 @@ class FNO2d(L.LightningModule):
         return x
 
     def training_step(self, batch, batch_idx):
-        x, y = batch  # Unpack input and target.
-        y_pred = self.forward(x)  # Generate predictions.
-        loss = F.mse_loss(y_pred, y)  # Calculate Mean Squared Error loss.
+        x, y = batch
+        y_pred = self.forward(x)
+        loss = F.mse_loss(y_pred, y)
         self.log("train_loss", loss)
         return loss
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_pred = self.forward(x)
-        loss = F.mse_loss(y_pred, y)  # Compute validation loss.
-        self.log("val_loss", loss)  # Log validation loss.
+        loss = F.mse_loss(y_pred, y)
+        self.log("val_loss", loss)
+
+    def test_step(self, batch, batch_idx):
+        x, y = batch
+        y_pred = self.forward(x)
+        loss = F.mse_loss(y_pred, y)
+        self.log("test_loss", loss)
 
     def configure_optimizers(self):
-        # Configure the Adam optimizer with a learning rate of 0.001.
         return torch.optim.Adam(self.parameters(), lr=0.001)
