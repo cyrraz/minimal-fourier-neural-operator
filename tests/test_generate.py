@@ -1,6 +1,5 @@
-import pytest
 import torch
-from minimal_fno.generate import generate_pde_data
+from minimal_fourier_neural_operator.generate import generate_pde_data
 
 
 def test_generate_pde_data_shape():

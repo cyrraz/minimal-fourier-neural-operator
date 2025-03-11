@@ -1,11 +1,26 @@
-[build-system]
-requires = ["flit_core >=3.11,<4"]
-build-backend = "flit_core.buildapi"
-
 [project]
-name = "minimal_fno"
+name = "minimal-fourier-neural-operator"
+version = "0.1.0"
+description = "Implements a minimal Fourier Neural Operator (FNO)."
 authors = [{name = "Cyrille Praz", email = "cyrraz.code@protonmail.com"}]
 readme = "README.md"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
-dynamic = ["version", "description"]
+requires-python = ">=3.12"
+dependencies = [
+    "lightning[extra]>=2.5.0.post0",
+    "torch>=2.6.0",
+]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.1.0",
+    "pytest>=8.3.5",
+]
+lint = [
+    "ruff>=0.9.10",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

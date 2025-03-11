@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import TensorDataset
 
 
 def generate_pde_data(grid_size=64, num_samples=1000, noise=0.0):
