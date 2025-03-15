@@ -3,7 +3,7 @@ import pytest
 import multiprocessing
 from lightning.pytorch import Trainer
 from torch.utils.data import DataLoader, TensorDataset
-from minimal_fourier_neural_operator.model import SpectralConv2d, FNO2d
+from minimal_fourier_neural_operator.model import SpectralConv2d, MLP, FNO2d
 
 # Ensure proper multiprocessing setup
 multiprocessing.set_start_method("spawn", force=True)
@@ -64,6 +64,20 @@ def test_spectral_conv2d_forward(spectral_conv_layer, sample_input):
     """Test the forward pass of the SpectralConv2d layer."""
     output = spectral_conv_layer(sample_input)
     assert output.shape == sample_input.shape
+
+
+def test_mlp_in_sequence():
+    """Test multiple MLPs in sequence."""
+    mlp1 = MLP(in_channels=8, out_channels=16, mid_channels=32)
+    mlp2 = MLP(in_channels=16, out_channels=8, mid_channels=32)
+
+    x = torch.randn(2, 8, 32, 32)
+
+    # Pass through sequence of MLPs
+    y = mlp2(mlp1(x))
+
+    # Output should have same shape as input in this case
+    assert y.shape == (2, 8, 32, 32)
 
 
 def test_fno2d_forward(fno2d_model, sample_input):

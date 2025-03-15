@@ -17,14 +17,17 @@ class SpectralConv2d(nn.Module):
         out_channels: Number of output feature channels.
         modes1, modes2: Number of retained Fourier modes for computation.
         """
-        super(SpectralConv2d, self).__init__()
+        super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.modes1 = modes1
         self.modes2 = modes2
-        # Learnable complex weights for Fourier domain multiplication.
-        self.weight = nn.Parameter(
-            torch.randn(out_channels, in_channels, modes1, modes2, dtype=torch.cfloat)
+
+        self.weight1 = nn.Parameter(
+            torch.randn(in_channels, out_channels, modes1, modes2, dtype=torch.cfloat)
+        )
+        self.weight2 = nn.Parameter(
+            torch.randn(in_channels, out_channels, modes1, modes2, dtype=torch.cfloat)
         )
 
     def forward(self, x):
@@ -38,19 +41,39 @@ class SpectralConv2d(nn.Module):
             batchsize,
             self.out_channels,
             height,
-            x_ft.size(-1),
+            width // 2 + 1,
             dtype=torch.cfloat,
             device=x.device,
         )
 
         # Apply spectral convolution with correct einsum dimensions
         out_ft[:, :, : self.modes1, : self.modes2] = torch.einsum(
-            "bcmn,coij->bomn", x_ft[:, :, : self.modes1, : self.modes2], self.weight
+            "bixy,ioxy->boxy", x_ft[:, :, : self.modes1, : self.modes2], self.weight1
+        )
+        out_ft[:, :, -self.modes1 :, : self.modes2] = torch.einsum(
+            "bixy,ioxy->boxy", x_ft[:, :, -self.modes1 :, : self.modes2], self.weight2
         )
 
         # Convert back to spatial domain
         x = torch.fft.irfft2(out_ft, s=(height, width))
+
         return x
+
+
+class MLP(nn.Module):
+    """A simple Multi-Layer Perceptron (MLP) using 1x1 convolutions."""
+
+    def __init__(self, in_channels, out_channels, mid_channels):
+        super().__init__()
+
+        self.mlp = nn.Sequential(
+            nn.Conv2d(in_channels, mid_channels, kernel_size=1),
+            nn.GELU(),
+            nn.Conv2d(mid_channels, out_channels, kernel_size=1),
+        )
+
+    def forward(self, x):
+        return self.mlp(x)
 
 
 class FNO2d(L.LightningModule):
