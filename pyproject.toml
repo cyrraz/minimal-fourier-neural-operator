@@ -9,6 +9,7 @@ license-files = ["LICENSE"]
 requires-python = ">=3.12"
 dependencies = [
     "lightning[extra]>=2.5.0.post0",
+    "neuraloperator>=1.0.2",
     "torch>=2.6.0",
 ]
 
