@@ -1,4 +1,5 @@
 import torch
+
 from minimal_fourier_neural_operator.generate import generate_pde_data
 
 

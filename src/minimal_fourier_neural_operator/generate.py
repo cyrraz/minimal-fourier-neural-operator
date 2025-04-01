@@ -53,6 +53,4 @@ def generate_pde_data(grid_size=64, num_samples=1000, noise=0.0):
     )  # Shape: (num_samples, 1, grid_size, grid_size)
 
     # Create TensorDataset object
-    dataset = TensorDataset(inputs, outputs)
-
-    return dataset
+    return TensorDataset(inputs, outputs)

@@ -2,6 +2,8 @@
 This script downloads the Darcy Flow dataset if not already downloaded and prints the number of samples in the training and testing sets.
 """
 
+import logging
+
 from neuralop.data.datasets import DarcyDataset
 
 # Set up basic parameters
@@ -30,7 +32,12 @@ dataset = DarcyDataset(
     download=True,
 )
 
-print(f"Darcy Flow dataset downloaded and loaded successfully to/from {data_dir}")
-print(f"Training samples: {len(dataset.train_db)}")
+# Set up logging
+logging.basicConfig(format="%(message)s: %(data)s", level=logging.INFO)
+
+logging.info(
+    "Darcy Flow dataset downloaded and loaded successfully to/from %s", data_dir
+)
+logging.info("Training samples: %i", len(dataset.train_db))
 for res, test_db in dataset.test_dbs.items():
-    print(f"Testing samples at resolution {res}: {len(test_db)}")
+    logging.info("Testing samples at resolution %i: %i", res, len(test_db))

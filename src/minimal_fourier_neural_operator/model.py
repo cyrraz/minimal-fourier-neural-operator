@@ -2,10 +2,10 @@
 Implements a minimal Fourier Neural Operator (FNO) using Lightning for learning mappings between function spaces.
 """
 
-import torch
 import lightning as L
-import torch.nn as nn
+import torch
 import torch.nn.functional as F
+from torch import nn
 
 
 class SpectralConv2d(nn.Module):
@@ -55,9 +55,7 @@ class SpectralConv2d(nn.Module):
         )
 
         # Convert back to spatial domain
-        x = torch.fft.irfft2(out_ft, s=(height, width))
-
-        return x
+        return torch.fft.irfft2(out_ft, s=(height, width))
 
 
 class MLP(nn.Module):
@@ -84,7 +82,7 @@ class FNO2d(L.LightningModule):
         modes1, modes2: Number of Fourier modes for convolution.
         width: Feature dimension after the initial lifting.
         """
-        super(FNO2d, self).__init__()
+        super().__init__()
         self.modes1 = modes1
         self.modes2 = modes2
         self.width = width
@@ -116,23 +114,23 @@ class FNO2d(L.LightningModule):
         x = x.permute(0, 2, 3, 1)
         # Further process features with fully connected layers.
         x = F.gelu(self.fc1(x))
-        x = self.fc2(x)
-        return x
 
-    def training_step(self, batch, batch_idx):
+        return self.fc2(x)
+
+    def training_step(self, batch, _batch_idx):
         x, y = batch
         y_pred = self.forward(x)
         loss = F.mse_loss(y_pred, y)
         self.log("train_loss", loss)
         return loss
 
-    def validation_step(self, batch, batch_idx):
+    def validation_step(self, batch, _batch_idx):
         x, y = batch
         y_pred = self.forward(x)
         loss = F.mse_loss(y_pred, y)
         self.log("val_loss", loss)
 
-    def test_step(self, batch, batch_idx):
+    def test_step(self, batch, _batch_idx):  # noqa: PT019
         x, y = batch
         y_pred = self.forward(x)
         loss = F.mse_loss(y_pred, y)

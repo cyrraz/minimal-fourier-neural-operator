@@ -1,9 +1,11 @@
-import torch
-import pytest
 import multiprocessing
+
+import pytest
+import torch
 from lightning.pytorch import Trainer
 from torch.utils.data import DataLoader, TensorDataset
-from minimal_fourier_neural_operator.model import SpectralConv2d, MLP, FNO2d
+
+from minimal_fourier_neural_operator.model import MLP, FNO2d, SpectralConv2d
 
 # Ensure proper multiprocessing setup
 multiprocessing.set_start_method("spawn", force=True)
